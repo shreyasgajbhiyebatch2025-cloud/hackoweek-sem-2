@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraVoyage | Book Flights, Hotels & Trains</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #008cff;
+            --soft-bg: #f2f5f8;
+            --card-white: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-light: #5e6d77;
+            --accent-orange: #ff5d5d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--soft-bg); color: var(--text-dark); }
+
+        /* Navigation */
+        header {
+            background: var(--card-white);
+            padding: 15px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; }
+
+        /* Hero with Fixed Background Image */
+        .hero {
+            height: 450px;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('https://images.pexels.com/photos/358482/pexels-photo-358482.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Search Widget */
+        .search-wrapper { max-width: 1100px; width: 95%; margin: -120px auto 40px; position: relative; }
+        .search-container { background: var(--card-white); border-radius: 15px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+
+        .tabs { display: flex; gap: 30px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .tab { 
+            cursor: pointer; font-weight: 700; color: var(--text-light); font-size: 0.95rem; 
+            display: flex; align-items: center; gap: 8px; padding-bottom: 10px;
+        }
+        .tab.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .input-box { padding: 15px 20px; border-right: 1px solid #eee; transition: 0.2s; }
+        .input-box:last-child { border-right: none; }
+        .input-box:hover { background: #f0f7ff; }
+        .input-box span { display: block; font-size: 0.75rem; color: var(--text-light); margin-bottom: 5px; }
+        .input-box strong { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .input-box i { color: var(--primary-blue); font-size: 1.1rem; }
+
+        .btn-search {
+            background: linear-gradient(90deg, #008cff, #0056b3);
+            color: white; border: none; border-radius: 50px;
+            padding: 15px 60px; font-size: 1.2rem; font-weight: 800;
+            cursor: pointer; display: block; margin: 25px auto 0;
+            box-shadow: 0 8px 15px rgba(0,140,255,0.3);
+        }
+
+        /* Destinations Section */
+        .section-title { width: 1100px; max-width: 95%; margin: 50px auto 20px; }
+        .grid-cards {
+            max-width: 1100px; width: 95%; margin: 0 auto 50px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;
+        }
+
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-info { padding: 15px; }
+        .card-info h4 { margin-bottom: 5px; }
+        .card-info p { font-size: 0.85rem; color: var(--text-light); }
+        .price { font-weight: 800; color: #1a1a1a; margin-top: 10px; display: block; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">TerraVoyage</div>
+    <div class="nav-links">
+        <span><i class="fa-solid fa-suitcase"></i> My Trips</span>
+        <span><i class="fa-solid fa-percent"></i> Offers</span>
+        <span style="color: var(--primary-blue)">Login</span>
+    </div>
+</header>
+
+<div class="hero"></div>
+
+<div class="search-wrapper">
+    <div class="search-container">
+        <div class="tabs">
+            <div class="tab active" onclick="updateMode('flights', this)"><i class="fa-solid fa-plane"></i> Flights</div>
+            <div class="tab" onclick="updateMode('hotels', this)"><i class="fa-solid fa-hotel"></i> Hotels</div>
+            <div class="tab" onclick="updateMode('trains', this)"><i class="fa-solid fa-train"></i> Trains</div>
+            <div class="tab" onclick="updateMode('buses', this)"><i class="fa-solid fa-bus"></i> Buses</div>
+        </div>
+
+        <div class="search-grid">
+            <div class="input-box">
+                <span id="labelFrom">FROM</span>
+                <strong id="valFrom"><i id="modeIcon" class="fa-solid fa-plane-departure"></i> <span id="textFrom">Mumbai (BOM)</span></strong>
+            </div>
+            <div class="input-box">
+                <span id="labelTo">TO</span>
+                <strong id="valTo"><i class="fa-solid fa-location-dot"></i> <span id="textTo">Delhi (DEL)</span></strong>
+            </div>
+            <div class="input-box">
+                <span>DEPARTURE DATE</span>
+                <strong><i class="fa-solid fa-calendar-days"></i> 24 Oct' 26</strong>
+            </div>
+            <div class="input-box">
+                <span>PASSENGERS</span>
+                <strong><i class="fa-solid fa-user"></i> 1 Person</strong>
+            </div>
+        </div>
+
+        <button class="btn-search" onclick="alert('Searching for the best prices in ₹...')">SEARCH</button>
+    </div>
+</div>
+
+<h2 class="section-title">Popular Indian Destinations</h2>
+<div class="grid-cards">
+    <div class="card">
+        <img src="https://images.pexels.com/photos/443446/pexels-photo-443446.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Goa">
+        <div class="card-info">
+            <h4>Goa Beaches</h4>
+            <p>Sun, Sand and Party</p>
+            <span class="price">Starts ₹4,999</span>
+        </div>
+    </div>
+    <div class="card">
+        <img src="https://images.pexels.com/photos/1603650/pexels-photo-1603650.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Taj Mahal">
+        <div class="card-info">
+            <h4>Agra Heritage</h4>
+            <p>Visit the Wonder of the World</p>
+            <span class="price">Starts ₹2,500</span>
+        </div>
+    </div>
+    <div class="card">
+        <img src="https://images.pexels.com/photos/2335126/pexels-photo-2335126.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Manali">
+        <div class="card-info">
+            <h4>Manali Hills</h4>
+            <p>Snow Peaks & Adventure</p>
+            <span class="price">Starts ₹8,200</span>
+        </div>
+    </div>
+    <div class="card">
+        <img src="https://images.pexels.com/photos/2443590/pexels-photo-2443590.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Kerala">
+        <div class="card-info">
+            <h4>Kerala Backwaters</h4>
+            <p>Peaceful Houseboats</p>
+            <span class="price">Starts ₹12,400</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateMode(type, element) {
+        // Update Tab Highlights
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+
+        // Update Icons and Text
+        const icon = document.getElementById('modeIcon');
+        const textFrom = document.getElementById('textFrom');
+        const textTo = document.getElementById('textTo');
+
+        if(type === 'trains') {
+            icon.className = 'fa-solid fa-train';
+            textFrom.innerText = 'NDLS, New Delhi';
+            textTo.innerText = 'CSMT, Mumbai';
+        } else if (type === 'hotels') {
+            icon.className = 'fa-solid fa-hotel';
+            textFrom.innerText = 'Select City';
+            textTo.innerText = 'Select Area';
+        } else if (type === 'buses') {
+            icon.className = 'fa-solid fa-bus';
+            textFrom.innerText = 'Bangalore';
+            textTo.innerText = 'Hyderabad';
+        } else {
+            icon.className = 'fa-solid fa-plane-departure';
+            textFrom.innerText = 'Mumbai (BOM)';
+            textTo.innerText = 'Delhi (DEL)';
+        }
+    }
+</script>
+
+</body>
+</html>

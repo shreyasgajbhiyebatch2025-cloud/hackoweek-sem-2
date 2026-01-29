@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON-RUN 2026 | Register</title>
+    <style>
+        :root {
+            --neon-lime: #ccff00;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-gray: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(45deg, rgba(204, 255, 0, 0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(204, 255, 0, 0.02) 25%, transparent 25%);
+            background-size: 60px 60px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* The "Speed Line" Decor */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--neon-lime);
+            box-shadow: 0 0 15px var(--neon-lime);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            line-height: 0.9;
+        }
+
+        h1 span {
+            color: var(--neon-lime);
+            display: block;
+        }
+
+        p.subtitle {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--neon-lime);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--neon-lime);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 10px rgba(204, 255, 0, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--neon-lime);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(204, 255, 0, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        ::placeholder {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Limitless <span>Marathon</span></h1>
+        <p class="subtitle">Push Your Boundaries • 2026</p>
+    </header>
+
+    <form action="#">
+        <div class="form-group">
+            <label for="name">Runner Name</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Digital Address (Email)</label>
+            <input type="email" id="email" placeholder="runner@speed.com" required>
+        </div>
+
+        <div class="grid">
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option>5K Fun Run</option>
+                    <option>10K Challenge</option>
+                    <option>21K Half-Marathon</option>
+                    <option>42K Full Beast</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tshirt">Shirt Size</label>
+                <select id="tshirt">
+                    <option>S</option>
+                    <option>M</option>
+                    <option>L</option>
+                    <option>XL</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="emergency">Emergency Contact Number</label>
+            <input type="tel" id="emergency" placeholder="+1 234 567 890">
+        </div>
+
+        <button type="submit" class="btn-submit">Claim Your Bib</button>
+    </form>
+</div>
+
+</body>
+</html>
