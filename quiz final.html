@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Up | Pro Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --accent: #FFD700; 
+            --text: #000000;
+            --grey: #f8f8f8;
+            --border: #000000;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Utilizes Full Screen Height/Width */
+        #app-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 4vw;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 4px solid var(--text);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .brand {
+            font-weight: 700;
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.8;
+        }
+
+        .status-pill {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            background: var(--text);
+            color: var(--bg);
+            padding: 5px 15px;
+        }
+
+        /* Large Progress Track */
+        .track-wrapper {
+            margin-bottom: 60px;
+        }
+        .track-line {
+            height: 10px;
+            background: var(--grey);
+            position: relative;
+            border: 2px solid var(--text);
+        }
+        #progress-fill {
+            height: 100%;
+            background: var(--text);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .ghost-dot {
+            position: absolute;
+            top: -15px;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border: 3px solid var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            left: 0%;
+            transition: left 2s ease;
+            z-index: 10;
+        }
+
+        /* Main Game Stage */
+        #stage {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h2 { font-weight: 700; font-size: 3.5rem; margin-bottom: 40px; line-height: 1; letter-spacing: -1px; }
+
+        /* Large Grid Buttons */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: var(--bg);
+            border: 3px solid var(--text);
+            padding: 35px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-align: left;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 var(--text);
+        }
+
+        .btn::after { content: "→"; opacity: 0.3; }
+
+        /* Feedback */
+        .correct { background: var(--accent) !important; box-shadow: none !important; transform: none !important; }
+        .wrong { background: var(--text) !important; color: var(--bg) !important; }
+        
+        .shake { animation: shake 0.4s ease; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-20px); }
+            40% { transform: translateX(20px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+
+        /* Results Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        .stat-card {
+            border: 3px solid var(--text);
+            padding: 30px;
+        }
+        .stat-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #888; }
+        .stat-value { font-size: 4rem; font-weight: 700; line-height: 1; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            h2 { font-size: 2rem; }
+            .grid-layout { grid-template-columns: 1fr; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .brand { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-wrapper">
+    <div class="header">
+        <div class="brand">Keep<br>Up.</div>
+        <div id="status-area">
+            <span class="status-pill" id="lvl-display">IDLE</span>
+        </div>
+    </div>
+
+    <div id="stage">
+        <div id="screen-topics">
+            <h2>Select your domain of expertise.</h2>
+            <div class="grid-layout" id="topic-grid"></div>
+        </div>
+
+        <div id="screen-quiz" class="hidden">
+            <div class="track-wrapper">
+                <div class="track-line">
+                    <div id="progress-fill"></div>
+                    <div class="ghost-dot" id="ghost-dot">!</div>
+                </div>
+            </div>
+            <h2 id="question-text">Loading question...</h2>
+            <div class="grid-layout" id="options-area"></div>
+        </div>
+
+        <div id="screen-results" class="hidden">
+            <h2>Session Analysis</h2>
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value" id="res-acc">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="res-score">0/10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Performance</div>
+                    <div class="stat-value" style="font-size: 2rem; padding-top:10px" id="res-perf">---</div>
+                </div>
+            </div>
+            <button class="btn" style="margin-top: 40px; width: auto; background: var(--accent);" onclick="location.reload()">Start New Session</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dataSet = {
+        "Sports": [
+            { q: "Which country has won the most FIFA World Cups?", a: "Brazil", o: ["Germany", "Brazil", "Italy", "Argentina"] },
+            { q: "What is the diameter of a basketball hoop in inches?", a: "18", o: ["16", "18", "20", "22"] },
+            { q: "Which tennis player has won the most Grand Slam titles?", a: "Novak Djokovic", o: ["Roger Federer", "Rafael Nadal", "Novak Djokovic", "Serena Williams"] },
+            { q: "In what year were the first modern Olympic Games held?", a: "1896", o: ["1896", "1900", "1924", "1888"] },
+            { q: "Which sport is known as the 'Sport of Kings'?", a: "Horse Racing", o: ["Polo", "Horse Racing", "Chess", "Fencing"] },
+            { q: "What is the length of a marathon in miles?", a: "26.2", o: ["24.2", "26.2", "28.2", "30.0"] },
+            { q: "How many players are on a water polo team on court?", a: "7", o: ["6", "7", "8", "11"] },
+            { q: "Who holds the record for the most points in a single NBA game?", a: "Wilt Chamberlain", o: ["Kobe Bryant", "Michael Jordan", "Wilt Chamberlain", "LeBron James"] },
+            { q: "In which sport would you use a 'Chalk' and a 'Bridge'?", a: "Billiards", o: ["Gymnastics", "Billiards", "Climbing", "Archery"] },
+            { q: "Which golf tournament winner receives a 'Green Jacket'?", a: "The Masters", o: ["US Open", "PGA Championship", "The Masters", "The Open"] }
+        ],
+        "Cars": [
+            { q: "What was the first car to be mass-produced?", a: "Model T", o: ["Model T", "Vauxhall", "Benz Patent Motorwagen", "Cadillac"] },
+            { q: "Which car company makes the '911' model?", a: "Porsche", o: ["Porsche", "Ferrari", "Audi", "BMW"] },
+            { q: "What does BMW stand for in English?", a: "Bavarian Motor Works", o: ["Berlin Motor Works", "Bavarian Motor Works", "Belgium Motor Wheels", "British Motor Wagon"] },
+            { q: "Which luxury brand features a 'Spirit of Ecstasy'?", a: "Rolls-Royce", o: ["Bentley", "Maybach", "Rolls-Royce", "Jaguar"] },
+            { q: "What is the top speed of the Bugatti Chiron (limited)?", a: "261 mph", o: ["230 mph", "261 mph", "300 mph", "210 mph"] },
+            { q: "Which country is the home of Volvo?", a: "Sweden", o: ["Germany", "Norway", "Sweden", "Finland"] },
+            { q: "What kind of engine does a Tesla use?", a: "Electric", o: ["V8", "Rotary", "Electric", "Hybrid"] },
+            { q: "Which Japanese car brand has a name that means 'Three Diamonds'?", a: "Mitsubishi", o: ["Subaru", "Mitsubishi", "Toyota", "Mazda"] },
+            { q: "What car features the famous 'Gullwing' doors?", a: "Mercedes 300SL", o: ["DeLorean", "Mercedes 300SL", "Lamborghini Countach", "Tesla Model X"] },
+            { q: "Which manufacturer produces the 'Corvette'?", a: "Chevrolet", o: ["Ford", "Dodge", "Chevrolet", "Shelby"] }
+        ],
+        "General Knowledge": [
+            { q: "What is the capital of Japan?", a: "Tokyo", o: ["Kyoto", "Osaka", "Tokyo", "Seoul"] },
+            { q: "What is the largest ocean on Earth?", a: "Pacific", o: ["Atlantic", "Indian", "Pacific", "Arctic"] },
+            { q: "Which element has the chemical symbol 'Au'?", a: "Gold", o: ["Silver", "Gold", "Copper", "Aluminum"] },
+            { q: "Who wrote 'Romeo and Juliet'?", a: "Shakespeare", o: ["Dickens", "Shakespeare", "Hemingway", "Austen"] },
+            { q: "What is the tallest mountain in the world?", a: "Mount Everest", o: ["K2", "Mount Everest", "Fuji", "Kilimanjaro"] },
+            { q: "Which planet is known as the Red Planet?", a: "Mars", o: ["Venus", "Mars", "Jupiter", "Saturn"] },
+            { q: "What is the currency of the UK?", a: "Pound Sterling", o: ["Euro", "Dollar", "Pound Sterling", "Franc"] },
+            { q: "How many continents are there?", a: "7", o: ["5", "6", "7", "8"] },
+            { q: "Which gas do plants absorb from the air?", a: "Carbon Dioxide", o: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"] },
+            { q: "What is the smallest prime number?", a: "2", o: ["1", "2", "3", "5"] }
+        ],
+        "Animals": [
+            { q: "What is the largest mammal on Earth?", a: "Blue Whale", o: ["Elephant", "Blue Whale", "Giraffe", "Orca"] },
+            { q: "How many hearts does an octopus have?", a: "3", o: ["1", "3", "5", "8"] },
+            { q: "What is a group of crows called?", a: "A Murder", o: ["A Pack", "A Murder", "A Pride", "A Flock"] },
+            { q: "Which animal is known as the 'King of the Jungle'?", a: "Lion", o: ["Tiger", "Gorilla", "Lion", "Elephant"] },
+            { q: "How many legs does a spider have?", a: "8", o: ["6", "8", "10", "12"] },
+            { q: "What is the only bird that can fly backwards?", a: "Hummingbird", o: ["Swift", "Hummingbird", "Parrot", "Kingfisher"] },
+            { q: "Which mammal has the longest lifespan?", a: "Bowhead Whale", o: ["Elephant", "Bowhead Whale", "Human", "Blue Whale"] },
+            { q: "A 'Clowder' is a group of what animal?", a: "Cats", o: ["Dogs", "Cats", "Owls", "Sheep"] },
+            { q: "Which animal has the strongest bite force?", a: "Crocodile", o: ["Great White Shark", "Hippo", "Crocodile", "Grizzly Bear"] },
+            { q: "How many compartments are in a cow's stomach?", a: "4", o: ["1", "2", "3", "4"] }
+        ],
+        "Video Games": [
+            { q: "What is the best-selling video game of all time?", a: "Minecraft", o: ["Tetris", "GTA V", "Minecraft", "Super Mario Bros"] },
+            { q: "What is the name of the main protagonist in 'Zelda'?", a: "Link", o: ["Zelda", "Ganon", "Link", "Tingle"] },
+            { q: "In 'Pac-Man', what color is the ghost 'Blinky'?", a: "Red", o: ["Red", "Pink", "Blue", "Orange"] },
+            { q: "Which game features the phrase 'Finish Him!'?", a: "Mortal Kombat", o: ["Street Fighter", "Tekken", "Mortal Kombat", "Doom"] },
+            { q: "What year was the original PlayStation released?", a: "1994", o: ["1992", "1994", "1996", "1998"] },
+            { q: "What is the highest possible level in Tetris (NES)?", a: "29", o: ["20", "29", "99", "Unlimited"] },
+            { q: "Which company created 'Sonic the Hedgehog'?", a: "Sega", o: ["Nintendo", "Sega", "Capcom", "Sony"] },
+            { q: "In 'Among Us', what is the name of the map set in space?", a: "The Skeld", o: ["The Skeld", "Mira HQ", "Polus", "Airship"] },
+            { q: "Who is the 'Master Chief' in Halo?", a: "John-117", o: ["Noble Six", "John-117", "Cortana", "Arbiter"] },
+            { q: "Which game features a city called 'Rapture'?", a: "BioShock", o: ["Fallout", "BioShock", "Borderlands", "Skyrim"] }
+        ],
+        "Ocean Facts": [
+            { q: "What percentage of the Earth's surface is water?", a: "71%", o: ["50%", "61%", "71%", "81%"] },
+            { q: "What is the deepest part of the ocean?", a: "Mariana Trench", o: ["Java Trench", "Mariana Trench", "Tonga Trench", "Puerto Rico Trench"] },
+            { q: "Which ocean is the smallest?", a: "Arctic", o: ["Indian", "Southern", "Arctic", "Atlantic"] },
+            { q: "What causes the majority of ocean waves?", a: "Wind", o: ["Tides", "Earthquakes", "Wind", "The Moon"] },
+            { q: "How many brains does a jellyfish have?", a: "0", o: ["0", "1", "2", "24"] },
+            { q: "What is the largest coral reef system?", a: "Great Barrier Reef", o: ["Belize Barrier Reef", "Great Barrier Reef", "Red Sea Coral Reef"] },
+            { q: "Which sea creature has no brain and no heart?", a: "Jellyfish", o: ["Starfish", "Jellyfish", "Sea Urchin", "Sponge"] },
+            { q: "The 'Great Pacific Garbage Patch' is twice the size of which state?", a: "Texas", o: ["Florida", "California", "Texas", "Alaska"] },
+            { q: "What is the study of the ocean called?", a: "Oceanography", o: ["Hydrology", "Oceanography", "Marine Biology", "Limnology"] },
+            { q: "Which fish is known for its ability to puff up?", a: "Pufferfish", o: ["Blowfish", "Pufferfish", "Anglerfish", "Sunfish"] }
+        ]
+    };
+
+    let topic = "";
+    let idx = 0;
+    let score = 0;
+    let ghostX = 0;
+
+    const topicGrid = document.getElementById('topic-grid');
+    Object.keys(dataSet).forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'btn';
+        b.innerText = t;
+        b.onclick = () => startSession(t);
+        topicGrid.appendChild(b);
+    });
+
+    function startSession(t) {
+        topic = t;
+        document.getElementById('screen-topics').classList.add('hidden');
+        document.getElementById('screen-quiz').classList.remove('hidden');
+        document.getElementById('lvl-display').innerText = `DOMAIN: ${t}`;
+        loadQuestion();
+        runGhost();
+    }
+
+    function loadQuestion() {
+        const q = dataSet[topic][idx];
+        document.getElementById('question-text').innerText = q.q;
+        const area = document.getElementById('options-area');
+        area.innerHTML = '';
+        q.o.forEach(opt => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = opt;
+            b.onclick = () => checkLogic(opt, b);
+            area.appendChild(b);
+        });
+    }
+
+    function checkLogic(choice, btn) {
+        const correct = dataSet[topic][idx].a;
+        if(choice === correct) {
+            btn.classList.add('correct');
+            score++;
+        } else {
+            btn.classList.add('wrong');
+            document.getElementById('app-wrapper').classList.add('shake');
+            setTimeout(() => document.getElementById('app-wrapper').classList.remove('shake'), 400);
+        }
+
+        setTimeout(() => {
+            idx++;
+            if(idx < dataSet[topic].length) {
+                document.getElementById('progress-fill').style.width = (idx / dataSet[topic].length * 100) + "%";
+                loadQuestion();
+            } else {
+                showFinals();
+            }
+        }, 600);
+    }
+
+    function runGhost() {
+        const g = document.getElementById('ghost-dot');
+        const timer = setInterval(() => {
+            if(ghostX < 98 && idx < 10) {
+                ghostX += Math.random() * 6;
+                g.style.left = ghostX + "%";
+            } else { clearInterval(timer); }
+        }, 1800);
+    }
+
+    function showFinals() {
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-results').classList.remove('hidden');
+        const acc = Math.round((score/10)*100);
+        document.getElementById('res-acc').innerText = acc + "%";
+        document.getElementById('res-score').innerText = `${score}/10`;
+        document.getElementById('res-perf').innerText = acc >= 80 ? "EXCEPTIONAL" : acc >= 50 ? "RELIABLE" : "UNSTABLE";
+    }
+</script>
+
+</body>
+</html>
