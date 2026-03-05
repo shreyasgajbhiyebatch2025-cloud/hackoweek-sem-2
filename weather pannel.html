@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmosphere Pro | Minimalist Weather</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Day Theme */
+            --bg-body: #F0F2F5;
+            --panel-bg: #ffffff;
+            --accent-red: #E63946;
+            --text-main: #1D3557;
+            --text-sub: #64748B;
+            --card-bg: #F8FAFC;
+            --border: rgba(230, 57, 70, 0.1);
+            --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .night-mode {
+            /* Night Theme */
+            --bg-body: #020617;
+            --panel-bg: #1e1b4b; /* Deep Indigo */
+            --accent-red: #FB7185;
+            --text-main: #F8FAFC;
+            --text-sub: #94A3B8;
+            --card-bg: #312e81;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .weather-panel {
+            width: 100%;
+            max-width: 480px;
+            background: var(--panel-bg);
+            border-radius: 40px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        /* Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--card-bg);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            cursor: pointer;
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        /* Main Display */
+        .header h2 { font-size: 1.8rem; letter-spacing: -1px; }
+        .header p { color: var(--text-sub); font-size: 0.9rem; margin-top: 4px; }
+
+        .hero-weather {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .main-temp {
+            font-size: 7rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -5px;
+            position: relative;
+        }
+
+        .main-temp::after {
+            content: '°';
+            color: var(--accent-red);
+            position: absolute;
+            font-size: 3rem;
+            top: 0;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 15px 10px;
+            border-radius: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .metric-card span {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .metric-card b { font-size: 0.95rem; }
+
+        /* Hourly Forecast */
+        .forecast-container { margin-top: 20px; }
+        .forecast-container h3 { font-size: 0.85rem; text-transform: uppercase; margin-bottom: 15px; color: var(--text-sub); }
+
+        .hourly-wrapper {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: none;
+        }
+
+        .hourly-wrapper::-webkit-scrollbar { display: none; }
+
+        .hour-item {
+            text-align: center;
+            min-width: 55px;
+        }
+
+        .hour-item .time { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px; }
+        .hour-item .h-temp { font-weight: 700; font-size: 1rem; }
+        .hour-item .icon { font-size: 1.2rem; margin: 5px 0; }
+
+        /* Sun/Moon visibility logic */
+        #sun-icon { display: none; }
+        .night-mode #moon-icon { display: none; }
+        .night-mode #sun-icon { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="weather-panel">
+        <button class="theme-toggle" id="themeBtn">
+            <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <div class="header">
+            <h2>Nagpur, IN</h2>
+            <p id="time-display">Thursday, 11:18 AM</p>
+        </div>
+
+        <div class="hero-weather">
+            <div class="main-temp">28</div>
+            <p style="font-weight: 600; letter-spacing: 2px; color: var(--text-sub); font-size: 0.8rem; margin-top: 10px;">MOSTLY SUNNY</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card"><span>Feels Like</span><b>30°C</b></div>
+            <div class="metric-card"><span>Humidity</span><b>45%</b></div>
+            <div class="metric-card"><span>UV Index</span><b style="color: var(--accent-red)">5 High</b></div>
+            <div class="metric-card"><span>Wind</span><b>14 km/h</b></div>
+            <div class="metric-card"><span>Visibility</span><b>12 km</b></div>
+            <div class="metric-card"><span>Precip.</span><b>0%</b></div>
+            <div class="metric-card" style="grid-column: span 3; display: flex; justify-content: space-around; align-items: center;">
+                <div style="text-align: left;"><span>Sunrise</span><b>06:24 AM</b></div>
+                <div style="height: 20px; width: 1px; background: var(--border);"></div>
+                <div style="text-align: left;"><span>Sunset</span><b>06:12 PM</b></div>
+            </div>
+        </div>
+
+        <div class="forecast-container">
+            <h3>Next 24 Hours</h3>
+            <div class="hourly-wrapper">
+                <div class="hour-item"><p class="time">Now</p><div class="icon">☀️</div><p class="h-temp">28°</p></div>
+                <div class="hour-item"><p class="time">1 PM</p><div class="icon">☀️</div><p class="h-temp">30°</p></div>
+                <div class="hour-item"><p class="time">2 PM</p><div class="icon">⛅</div><p class="h-temp">31°</p></div>
+                <div class="hour-item"><p class="time">3 PM</p><div class="icon">⛅</div><p class="h-temp">31°</p></div>
+                <div class="hour-item"><p class="time">4 PM</p><div class="icon">☀️</div><p class="h-temp">29°</p></div>
+                <div class="hour-item"><p class="time">5 PM</p><div class="icon">🌅</div><p class="h-temp">27°</p></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('themeBtn');
+        btn.addEventListener('click', () => {
+            document.body.classList.toggle('night-mode');
+        });
+    </script>
+</body>
+</html>

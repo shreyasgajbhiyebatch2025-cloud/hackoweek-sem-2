@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevLaunch | 12-Week Web Development Bootcamp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #E63946;
+            --deep-black: #1D3557;
+            --soft-white: #F8F9FA;
+            --text-gray: #4A4A4A;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-gray);
+            background-color: white;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--deep-black);
+        }
+
+        .logo span { color: var(--primary-red); }
+
+        .nav-links { list-style: none; display: flex; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { text-decoration: none; color: var(--text-gray); font-weight: 500; }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 10% 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-content { max-width: 600px; }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            color: var(--deep-black);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .btn-red {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-red:hover {
+            background: #c12e39;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        /* Features Section */
+        .curriculum {
+            background: var(--soft-white);
+            padding: 80px 10%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            border-top: 4px solid var(--primary-red);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { margin-bottom: 15px; color: var(--deep-black); }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero { flex-direction: column; text-align: center; padding: 50px 5%; }
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">DEV<span>LAUNCH</span></div>
+        <ul class="nav-links">
+            <li><a href="#curriculum">Curriculum</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Apply Now</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Master Web Development in 12 Weeks.</h1>
+            <p>Go from zero code to a job-ready developer with our intensive, project-based bootcamp.</p>
+            <a href="#" class="btn btn-red">Enroll in Summer Cohort</a>
+        </div>
+        <div class="hero-image">
+            <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="300" rx="20" fill="#E63946" fill-opacity="0.05"/>
+                <path d="M100 150L150 200L250 100" stroke="#E63946" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </section>
+
+    <section class="curriculum" id="curriculum">
+        <div class="section-title">
+            <h2>The Curriculum</h2>
+            <p>Modern tools for modern developers.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>Frontend Mastery</h3>
+                <p>HTML5, CSS3 (Grid/Flexbox), and Modern JavaScript ES6+.</p>
+            </div>
+            <div class="card">
+                <h3>React & State</h3>
+                <p>Building scalable interfaces with React.js and Redux Toolkit.</p>
+            </div>
+            <div class="card">
+                <h3>Backend Architecture</h3>
+                <p>Node.js, Express, and Database management with MongoDB.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="padding: 40px; text-align: center; border-top: 1px solid #eee;">
+        <p>&copy; 2026 DevLaunch Institute. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
